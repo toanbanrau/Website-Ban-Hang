@@ -1,103 +1,99 @@
 import { Link } from "react-router-dom";
-import IProduct from "../../interfaces/product";
 import { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
-
-
+import { Table, Button, Space } from "antd";
+import IProduct from "../../interfaces/product";
 
 // function component
 function ProductList() {
   const [products, setProducts] = useState<IProduct[]>([]);
+
+  // Lấy danh sách sản phẩm từ API
   useEffect(() => {
     const getAll = async () => {
-
       try {
-        const { data } = await axios.get(` http://localhost:3000/products`)
+        const { data } = await axios.get("http://localhost:3000/products");
         if (data) {
           setProducts(data);
         }
       } catch (error) {
         toast.error((error as AxiosError).message);
       }
-    }
+    };
     getAll();
+  }, []);
 
-  }, [])
-
+  // Xử lý xóa sản phẩm
   const handleDelete = async (id: string) => {
-    if (window.confirm('ban chac chan muon xoa k')) {
-      if (id) {
-        try {
-          await axios.delete(`http://localhost:3000/products/${id}`)
-          toast.success('xoa thanh cong');
-          setProducts((prev: IProduct[]) => {
-            return prev.filter((item: IProduct) => {
-              return item.id != id;
-            })
-          })
-        } catch (error) {
-          toast.error((error as AxiosError).message)
-        }
+    if (window.confirm("Bạn chắc chắn muốn xóa sản phẩm này?")) {
+      try {
+        await axios.delete(`http://localhost:3000/products/${id}`);
+        toast.success("Xóa sản phẩm thành công!");
+        setProducts((prev) => prev.filter((item) => item.id !== id));
+      } catch (error) {
+        toast.error((error as AxiosError).message);
       }
     }
-  }
-  return( <div>
-    <h1>Danh sách sản phẩm</h1>
-    <table className="table" border = {1}
-    >
+  };
 
-      <thead >
-        <tr >
-          <th scope="col" >STT</th>
-          <th scope="col">Tên</th>
-          <th scope="col">Giá</th>
-          <th scope="col">Ảnh</th>
-          <th scope="col">Mô tả</th>
-          <th scope="col">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {products?.map((item: IProduct, index: number) => {
-          return (
-            <tr key={item.id}>
-              <th scope="row">{index + 1}</th>
-              <td>{item.name}</td>
-              <td>{item.price}</td>
-              <td><img src={item.thumbnail} height={"70px"} alt={item.thumbnail}/></td>
-              <td>{item.description}</td>
+  // Cấu trúc dữ liệu của bảng
+  const columns = [
+    {
+      title: "Tên sản phẩm",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Giá",
+      dataIndex: "price",
+      key: "price",
+      render: (price: number) => `${price.toLocaleString()} VNĐ`, // Format giá tiền
+    },
 
-              <td>
-                <button className="btn btn-danger" onClick={() => { handleDelete(item.id) }} style={{
-                    backgroundColor: '#dc3545',
-                    color: '#fff',
-                    border: 'none'
-                    
-                    
-                  }}>XOÁ</button>
-                <Link to={`edit/${item.id}`}>
-                    <button className="btn btn-primary" 
-                    style={{
-                      backgroundColor: '#007bff',
-                      color: '#fff',
-                      border: "none"
-                      }}>
-                      Sửa
-                      
-                    </button>                
-                </Link>
-              </td>
-            </tr>
-          )
-        })}
+    {
+      title: "Image",
+      dataIndex: "thumbnail",
+      key: "thumbnail",
+      render: (thumbnail: string) => (
+        <img src={thumbnail} alt="Product" width="100" />
+      ),
+    },
+    {
+      title: "Mô tả",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Hành động",
+      key: "action",
+      render: (_: any, record: IProduct) => (
+        <Space size="middle">
+          <Link to={`/product/${record.id}/edit`}>
+            <Button type="primary">Sửa</Button>
+          </Link>
+          <Button type="primary" danger onClick={() => handleDelete(record.id)}>
+            Xóa
+          </Button>
+        </Space>
+      ),
+    },
+  ];
 
-
-      </tbody>
-    </table>
-
-
-  </div>
-  )
+  return (
+    <div>
+      <h1>Danh sách sản phẩm</h1>
+      <Link to="/product/add">
+        <Button type="primary" style={{ marginBottom: 16 }}>
+          Thêm sản phẩm
+        </Button>
+      </Link>
+      <Table
+        dataSource={products.map((p) => ({ ...p, key: p.id }))}
+        columns={columns}
+      />
+    </div>
+  );
 }
 
 export default ProductList;

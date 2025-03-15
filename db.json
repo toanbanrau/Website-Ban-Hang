@@ -1,27 +1,19 @@
 {
-    "products": [
-      {
-        "id": 1,
-        "name": "Nike Air Force 1",
-        "price": 2500000,
-        "thumbnail": "https://example.com/nike-af1.jpg",
-        "description": "Giày thể thao Nike Air Force 1 cổ điển."
-      },
-      {
-        "id": 2,
-        "name": "Adidas Ultraboost",
-        "price": 3200000,
-        "thumbnail": "https://example.com/adidas-ultraboost.jpg",
-        "description": "Giày chạy bộ Adidas Ultraboost thoải mái."
-      },
-      {
-        "id": 3,
-        "name": "Puma RS-X",
-        "price": 2800000,
-        "thumbnail": "https://example.com/puma-rsx.jpg",
-        "description": "Giày thể thao Puma RS-X phong cách hiện đại."
-      }
-    ],
-    "users": []
-  }
-  
+  "products": [
+    {
+      "id": "2",
+      "name": "Adidas Ultraboost",
+      "price": 3200000,
+      "thumbnail": "https://example.com/adidas-ultraboost.jpg",
+      "description": "Giày chạy bộ Adidas Ultraboost thoải mái."
+    },
+    {
+      "id": "3",
+      "name": "Puma RS-X",
+      "price": 2800000,
+      "thumbnail": "https://example.com/puma-rsx.jpg",
+      "description": "Giày thể thao Puma RS-X phong cách hiện đại."
+    }
+  ],
+  "users": []
+}
