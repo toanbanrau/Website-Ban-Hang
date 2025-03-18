@@ -1,41 +1,45 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 import { Table, Button, Space } from "antd";
 import IProduct from "../../interfaces/product";
-
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 // function component
 function ProductList() {
-  const [products, setProducts] = useState<IProduct[]>([]);
+  const queryClient = useQueryClient();
+  const getAllProduct = async () => {
+    const { data } = await axios.get("http://localhost:3000/products");
+    return data;
+  };
+  const { data, isLoading } = useQuery({
+    queryKey: ["products"],
+    queryFn: getAllProduct,
+  });
 
   // Lấy danh sách sản phẩm từ API
-  useEffect(() => {
-    const getAll = async () => {
-      try {
-        const { data } = await axios.get("http://localhost:3000/products");
-        if (data) {
-          setProducts(data);
-        }
-      } catch (error) {
-        toast.error((error as AxiosError).message);
-      }
-    };
-    getAll();
-  }, []);
 
   // Xử lý xóa sản phẩm
-  const handleDelete = async (id: string) => {
+  const deleteProduct = useMutation({
+    mutationFn: async (id: string) => {
+      await axios.delete(`http://localhost:3000/products/${id}`);
+    },
+    onSuccess: () => {
+      toast.success("Xóa sản phẩm thành công!");
+      queryClient.invalidateQueries(["products"]); // Cập nhật lại danh sách sản phẩm
+    },
+    onError: (error: AxiosError) => {
+      toast.error(`Lỗi: ${error.message}`);
+    },
+  });
+
+  // Hàm xử lý xóa sản phẩm
+  const handleDelete = (id: string) => {
     if (window.confirm("Bạn chắc chắn muốn xóa sản phẩm này?")) {
-      try {
-        await axios.delete(`http://localhost:3000/products/${id}`);
-        toast.success("Xóa sản phẩm thành công!");
-        setProducts((prev) => prev.filter((item) => item.id !== id));
-      } catch (error) {
-        toast.error((error as AxiosError).message);
-      }
+      deleteProduct.mutate(id);
     }
   };
+  // };
 
   // Cấu trúc dữ liệu của bảng
   const columns = [
@@ -69,7 +73,7 @@ function ProductList() {
       key: "action",
       render: (_: any, record: IProduct) => (
         <Space size="middle">
-          <Link to={`/product/${record.id}/edit`}>
+          <Link to={`/admin/product/edit/${record.id}`}>
             <Button type="primary">Sửa</Button>
           </Link>
           <Button type="primary" danger onClick={() => handleDelete(record.id)}>
@@ -83,15 +87,12 @@ function ProductList() {
   return (
     <div>
       <h1>Danh sách sản phẩm</h1>
-      <Link to="/product/add">
+      <Link to="/admin/product/add">
         <Button type="primary" style={{ marginBottom: 16 }}>
           Thêm sản phẩm
         </Button>
       </Link>
-      <Table
-        dataSource={products.map((p) => ({ ...p, key: p.id }))}
-        columns={columns}
-      />
+      <Table dataSource={data} columns={columns} loading={isLoading} />
     </div>
   );
 }

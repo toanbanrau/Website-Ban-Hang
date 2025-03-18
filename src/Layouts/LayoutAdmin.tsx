@@ -8,55 +8,82 @@ import {
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const { Header, Content, Footer, Sider } = Layout;
 
-type MenuItem = Required<MenuProps>["items"][number];
-
-function getItem(
-  label: React.ReactNode,
-  key: React.Key,
-  icon?: React.ReactNode,
-  children?: MenuItem[]
-): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    label,
-  } as MenuItem;
-}
-
-const items: MenuItem[] = [
-  getItem("Option 1", "1", <PieChartOutlined />),
-  getItem("Option 2", "2", <DesktopOutlined />),
-  getItem("User", "sub1", <UserOutlined />, [
-    getItem("Tom", "3"),
-    getItem("Bill", "4"),
-    getItem("Alex", "5"),
-  ]),
-  getItem("Team", "sub2", <TeamOutlined />, [
-    getItem("Team 1", "6"),
-    getItem("Team 2", "8"),
-  ]),
-  getItem("Files", "9", <FileOutlined />),
-];
-
 const LayoutAdmin: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+  const navigate = useNavigate(); // ✅ Hook điều hướng
+
+  // Danh sách menu
+  const items: MenuProps["items"] = [
+    {
+      key: "1",
+      icon: <PieChartOutlined />,
+      label: "Product",
+      onClick: () => navigate("/admin/product/list"),
+    },
+    {
+      key: "2",
+      icon: <DesktopOutlined />,
+      label: "Order",
+      onClick: () => navigate("/admin/order"),
+    },
+    {
+      key: "sub1",
+      icon: <UserOutlined />,
+      label: "User",
+      children: [
+        { key: "3", label: "Tom", onClick: () => navigate("/admin/user/tom") },
+        {
+          key: "4",
+          label: "Bill",
+          onClick: () => navigate("/admin/user/bill"),
+        },
+        {
+          key: "5",
+          label: "Alex",
+          onClick: () => navigate("/admin/user/alex"),
+        },
+      ],
+    },
+    {
+      key: "sub2",
+      icon: <TeamOutlined />,
+      label: "Team",
+      children: [
+        { key: "6", label: "Team 1", onClick: () => navigate("/admin/team/1") },
+        { key: "8", label: "Team 2", onClick: () => navigate("/admin/team/2") },
+      ],
+    },
+    {
+      key: "9",
+      icon: <FileOutlined />,
+      label: "Files",
+      onClick: () => navigate("/admin/files"),
+    },
+  ];
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
+      {/* Sidebar */}
       <Sider
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
       >
-        <div className="demo-logo-vertical" />
+        <div
+          style={{
+            height: 64,
+            textAlign: "center",
+            lineHeight: "64px",
+            color: "white",
+            fontSize: 20,
+          }}
+        >
+          Admin Panel
+        </div>
         <Menu
           theme="dark"
           defaultSelectedKeys={["1"]}
@@ -64,22 +91,34 @@ const LayoutAdmin: React.FC = () => {
           items={items}
         />
       </Sider>
+
+      {/* Layout chính */}
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }} />
+        <Header
+          style={{
+            padding: 0,
+            background: "#fff",
+            textAlign: "center",
+            fontSize: 20,
+            fontWeight: "bold",
+          }}
+        >
+          Admin Dashboard
+        </Header>
         <Content style={{ margin: "0 16px" }}>
           <Breadcrumb style={{ margin: "16px 0" }}>
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
+            <Breadcrumb.Item>Admin</Breadcrumb.Item>
+            <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
           </Breadcrumb>
           <div
             style={{
               padding: 24,
               minHeight: 360,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
+              background: "#fff",
+              borderRadius: 8,
             }}
           >
-            <Outlet></Outlet>
+            <Outlet />
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>
