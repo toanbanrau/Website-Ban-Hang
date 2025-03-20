@@ -33,7 +33,15 @@
       "name": "Toàn Bán Cá",
       "price": "123",
       "thumbnail": "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcRJtzmgVT2fv78D38hJl2iEyxsrEAv1IIDn4LM_w_nowdyRxQTfrc_61fe3bMkvZ6QIw1-p00N4mixKa2HgYLftsO7PC3UMXpN9fEDKkVWDamXAL4Z5Z0hAOzFsW13TQf866h1oRoA&usqp=CAc",
-      "description": "123"
+      "description": "123",
+      "categoryId":"2d48"
+      
+    }
+  ],
+  "categorys": [
+    {
+      "id": "2d48",
+      "name": "Jordan"
     }
   ],
   "users": []

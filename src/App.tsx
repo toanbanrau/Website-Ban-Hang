@@ -5,6 +5,8 @@ import ProductAdd from "./pages/product/add";
 import ProductEdit from "./pages/product/edit";
 import LayoutAdmin from "./Layouts/LayoutAdmin";
 import LayoutClient from "./Layouts/LayoutClient";
+import CategoryList from "./pages/category/list";
+import Order from "./pages/orders/list";
 
 function App() {
   const element = useRoutes([
@@ -27,6 +29,14 @@ function App() {
         {
           path: "product/edit/:id",
           element: <ProductEdit />,
+        },
+        {
+          path: "category",
+          element: <CategoryList />,
+        },
+        {
+          path: "order",
+          element: <Order />,
         },
       ],
     },

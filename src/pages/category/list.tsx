@@ -4,19 +4,20 @@ import { toast } from "react-hot-toast";
 import { Table, Button, Space, Drawer, Form, Input, InputNumber } from "antd";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import IProduct from "../../interfaces/product";
+import ICategory from "../../interfaces/categorys";
 
-function ProductList() {
+function CategoryList() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false); // State mở/đóng Sidebar
   const [isEditing, setIsEditing] = useState(false); // Xác định đang sửa hay thêm mới
   const [form] = Form.useForm();
-  const [editingProduct, setEditingProduct] = useState<IProduct | null>(null); // Lưu sản phẩm đang chỉnh sửa
+  const [editingProduct, setEditingProduct] = useState<ICategory | null>(null); // Lưu sản phẩm đang chỉnh sửa
 
   // Fetch danh sách sản phẩm
   const { data: products, isLoading } = useQuery({
-    queryKey: ["products"],
+    queryKey: ["categorys"],
     queryFn: async () => {
-      const { data } = await axios.get("http://localhost:3000/products");
+      const { data } = await axios.get("http://localhost:3000/categorys");
       return data;
     },
   });
@@ -24,11 +25,11 @@ function ProductList() {
   // Thêm sản phẩm mới
   const addProduct = useMutation({
     mutationFn: async (newProduct: IProduct) => {
-      await axios.post("http://localhost:3000/products", newProduct);
+      await axios.post("http://localhost:3000/categorys", newProduct);
     },
     onSuccess: () => {
       toast.success("Thêm sản phẩm thành công!");
-      queryClient.invalidateQueries(["products"]);
+      queryClient.invalidateQueries(["categorys"]);
       setOpen(false);
       form.resetFields();
     },
@@ -39,15 +40,15 @@ function ProductList() {
 
   // Cập nhật sản phẩm
   const editProduct = useMutation({
-    mutationFn: async (updatedProduct: IProduct) => {
+    mutationFn: async (updatedProduct: ICategory) => {
       await axios.put(
-        `http://localhost:3000/products/${updatedProduct.id}`,
+        `http://localhost:3000/categorys/${updatedProduct.id}`,
         updatedProduct
       );
     },
     onSuccess: () => {
       toast.success("Cập nhật sản phẩm thành công!");
-      queryClient.invalidateQueries(["products"]);
+      queryClient.invalidateQueries(["categorys"]);
       setOpen(false);
       setEditingProduct(null);
       form.resetFields();
@@ -90,28 +91,14 @@ function ProductList() {
   // Cấu trúc bảng
   const columns = [
     {
-      title: "Tên sản phẩm",
+      title: "Tên Danh Mục",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Giá",
-      dataIndex: "price",
-      key: "price",
-      render: (price: number) => `${price.toLocaleString()} VNĐ`,
-    },
-    {
-      title: "Image",
-      dataIndex: "thumbnail",
-      key: "thumbnail",
-      render: (thumbnail: string) => (
-        <img src={thumbnail} alt="Product" width="100" />
-      ),
-    },
-    {
       title: "Hành động",
       key: "action",
-      render: (_: any, record: IProduct) => (
+      render: (_: any, record: ICategory) => (
         <Space size="middle">
           <Button type="primary" onClick={() => showEditDrawer(record)}>
             Sửa
@@ -132,14 +119,14 @@ function ProductList() {
         style={{ marginBottom: 16 }}
         onClick={showAddDrawer}
       >
-        Thêm sản phẩm
+        Thêm Danh Mục
       </Button>
 
       <Table dataSource={products} columns={columns} loading={isLoading} />
 
       {/* Sidebar Thêm/Sửa Sản Phẩm */}
       <Drawer
-        title={isEditing ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm mới"}
+        title={isEditing ? "Chỉnh sửa danh mục" : "Thêm danh mục mới"}
         width={400}
         onClose={closeDrawer}
         open={open}
@@ -148,31 +135,14 @@ function ProductList() {
         <Form form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item
             name="name"
-            label="Tên sản phẩm"
-            rules={[{ required: true, message: "Vui lòng nhập tên sản phẩm" }]}
+            label="Tên danh mục"
+            rules={[{ required: true, message: "Vui lòng nhập tên danh mục" }]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item
-            name="price"
-            label="Giá sản phẩm"
-            rules={[{ required: true, message: "Vui lòng nhập giá sản phẩm" }]}
-          >
-            <InputNumber style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item
-            name="thumbnail"
-            label="Hình ảnh"
-            rules={[{ required: true, message: "Vui lòng nhập URL hình ảnh" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item name="description" label="Mô tả">
-            <Input.TextArea />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              {isEditing ? "Cập nhật" : "Lưu"}
+              {isEditing ? "Cập nhật" : "Lưu"}s
             </Button>
           </Form.Item>
         </Form>
@@ -181,4 +151,4 @@ function ProductList() {
   );
 }
 
-export default ProductList;
+export default CategoryList;

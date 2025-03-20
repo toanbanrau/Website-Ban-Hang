@@ -5,6 +5,9 @@ import {
   PieChartOutlined,
   TeamOutlined,
   UserOutlined,
+  AppstoreOutlined,
+  TagsOutlined,
+  InboxOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
@@ -20,15 +23,21 @@ const LayoutAdmin: React.FC = () => {
   const items: MenuProps["items"] = [
     {
       key: "1",
-      icon: <PieChartOutlined />,
+      icon: <InboxOutlined />,
       label: "Product",
       onClick: () => navigate("/admin/product/list"),
     },
     {
       key: "2",
-      icon: <DesktopOutlined />,
+      icon: <AppstoreOutlined />,
       label: "Order",
       onClick: () => navigate("/admin/order"),
+    },
+    {
+      key: "10",
+      icon: <FileOutlined />,
+      label: "Category",
+      onClick: () => navigate("/admin/category"), // ✅ Thêm Category
     },
     {
       key: "sub1",
