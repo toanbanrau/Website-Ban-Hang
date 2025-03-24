@@ -6,13 +6,26 @@ import ProductEdit from "./pages/product/edit";
 import LayoutAdmin from "./Layouts/LayoutAdmin";
 import LayoutClient from "./Layouts/LayoutClient";
 import CategoryList from "./pages/category/list";
-import Order from "./pages/orders/list";
+import Order from "./pages/orders/List";
+import DetailProduct from "./pages/DetailProduct";
+import Home from "./pages/Home";
 
 function App() {
   const element = useRoutes([
     {
       path: "/",
       element: <LayoutClient />,
+      children: [
+        {
+          path: "/",
+          element: <Home />,
+        },
+        {
+          path: "product/:id",
+          element: <DetailProduct />,
+        },
+    
+      ],
     },
     {
       path: "/admin",
@@ -30,6 +43,7 @@ function App() {
           path: "product/edit/:id",
           element: <ProductEdit />,
         },
+
         {
           path: "category",
           element: <CategoryList />,

@@ -1,9 +1,19 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { Table, Button, Space, Drawer, Form, Input, InputNumber } from "antd";
+import {
+  Table,
+  Button,
+  Space,
+  Drawer,
+  Form,
+  Input,
+  Select,
+  InputNumber,
+} from "antd";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import IProduct from "../../interfaces/product";
+import ICategory from "../../interfaces/categorys";
 
 function ProductList() {
   const queryClient = useQueryClient();
@@ -11,6 +21,14 @@ function ProductList() {
   const [isEditing, setIsEditing] = useState(false); // Xác định đang sửa hay thêm mới
   const [form] = Form.useForm();
   const [editingProduct, setEditingProduct] = useState<IProduct | null>(null); // Lưu sản phẩm đang chỉnh sửa
+
+  const { data: categories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const { data } = await axios.get("http://localhost:3000/categories");
+      return data;
+    },
+  });
 
   // Fetch danh sách sản phẩm
   const { data: products, isLoading } = useQuery({
@@ -86,7 +104,23 @@ function ProductList() {
       addProduct.mutate(values);
     }
   };
+  const removeProduct = useMutation({
+    mutationFn: async (id: string) => {
+      await axios.delete(`http://localhost:3000/products/${id}`);
+    },
+    onSuccess: () => {
+      toast.success("Xóa sản phẩm thành công!");
+      queryClient.invalidateQueries(["products"]); // Làm mới danh sách sản phẩm
+    },
+    onError: () => {
+      toast.error("Lỗi khi xóa sản phẩm!");
+    },
+  });
 
+  // ✅ Gọi mutate bên trong hàm `handleRemove`
+  const handleRemove = (id: string) => {
+    removeProduct.mutate(id);
+  };
   // Cấu trúc bảng
   const columns = [
     {
@@ -109,6 +143,21 @@ function ProductList() {
       ),
     },
     {
+      title: "Mô Tả",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Danh Mục",
+      dataIndex: "categoryId",
+      render: (categoryId: string) => {
+        const category = categories?.find(
+          (cat: ICategory) => cat.id === categoryId
+        );
+        return category ? category.name : "Không xác định";
+      },
+    },
+    {
       title: "Hành động",
       key: "action",
       render: (_: any, record: IProduct) => (
@@ -116,7 +165,7 @@ function ProductList() {
           <Button type="primary" onClick={() => showEditDrawer(record)}>
             Sửa
           </Button>
-          <Button type="primary" danger>
+          <Button onClick={() => handleRemove(record.id)} type="primary" danger>
             Xóa
           </Button>
         </Space>
@@ -169,6 +218,19 @@ function ProductList() {
           </Form.Item>
           <Form.Item name="description" label="Mô tả">
             <Input.TextArea />
+          </Form.Item>
+          <Form.Item
+            name="categoryId"
+            label="Danh mục"
+            rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
+          >
+            <Select placeholder="Chọn danh mục">
+              {categories?.map((category: ICategory) => (
+                <Select.Option key={category.id} value={category.id}>
+                  {category.name}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">

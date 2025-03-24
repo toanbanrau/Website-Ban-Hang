@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 const ProductAdd = () => {
   const navigate = useNavigate();
   const addProduct = async (data: IProduct) => {
-    await axios.post("http://localhost:3000/products", data);
+    await axios.post
   };
 
   const { mutate } = useMutation({

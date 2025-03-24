@@ -1,10 +1,20 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { Table, Button, Space, Drawer, Form, Input, InputNumber } from "antd";
+import {
+  Table,
+  Button,
+  Space,
+  Drawer,
+  Form,
+  Input,
+  InputNumber,
+  Collapse,
+} from "antd";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import IProduct from "../../interfaces/product";
 import ICategory from "../../interfaces/categorys";
+import { data } from "react-router-dom";
 
 function CategoryList() {
   const queryClient = useQueryClient();
@@ -14,10 +24,19 @@ function CategoryList() {
   const [editingProduct, setEditingProduct] = useState<ICategory | null>(null); // Lưu sản phẩm đang chỉnh sửa
 
   // Fetch danh sách sản phẩm
-  const { data: products, isLoading } = useQuery({
+  const { data: productList, isLoading: isProductLoading } = useQuery({
+    queryKey: ["products"],
+    queryFn: async () => {
+      const { data } = await axios.get("http://localhost:3000/products");
+      return data;
+    },
+  });
+
+  // Fetch danh sách danh mục
+  const { data: categories, isLoading: isCategoryLoading } = useQuery({
     queryKey: ["categorys"],
     queryFn: async () => {
-      const { data } = await axios.get("http://localhost:3000/categorys");
+      const { data } = await axios.get("http://localhost:3000/categories");
       return data;
     },
   });
@@ -25,11 +44,11 @@ function CategoryList() {
   // Thêm sản phẩm mới
   const addProduct = useMutation({
     mutationFn: async (newProduct: IProduct) => {
-      await axios.post("http://localhost:3000/categorys", newProduct);
+      await axios.post("http://localhost:3000/categories", newProduct);
     },
     onSuccess: () => {
       toast.success("Thêm sản phẩm thành công!");
-      queryClient.invalidateQueries(["categorys"]);
+      queryClient.invalidateQueries(["categories"]);
       setOpen(false);
       form.resetFields();
     },
@@ -42,7 +61,7 @@ function CategoryList() {
   const editProduct = useMutation({
     mutationFn: async (updatedProduct: ICategory) => {
       await axios.put(
-        `http://localhost:3000/categorys/${updatedProduct.id}`,
+        `http://localhost:3000/categories/${updatedProduct.id}`,
         updatedProduct
       );
     },
@@ -96,6 +115,36 @@ function CategoryList() {
       key: "name",
     },
     {
+      title: "Hình ảnh",
+      dataIndex: "productsId",
+      render: (_: any, record: ICategory) => {
+        const categoryProducts = productList?.filter(
+          (p: IProduct) => p.categoryId === record.id
+        );
+        return (
+          <div>
+            {categoryProducts?.length > 0 ? (
+              categoryProducts.map((item: IProduct) => (
+                <img
+                  key={item.id}
+                  src={item.thumbnail}
+                  alt={item.name}
+                  style={{
+                    width: 50,
+                    height: 50,
+                    marginRight: 10,
+                    objectFit: "cover",
+                  }}
+                />
+              ))
+            ) : (
+              <span>Không có sản phẩm</span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
       title: "Hành động",
       key: "action",
       render: (_: any, record: ICategory) => (
@@ -103,7 +152,13 @@ function CategoryList() {
           <Button type="primary" onClick={() => showEditDrawer(record)}>
             Sửa
           </Button>
-          <Button type="primary" danger>
+          <Button
+            type="primary"
+            danger
+            onClick={() => {
+              console.log("Xóa danh mục:", record);
+            }}
+          >
             Xóa
           </Button>
         </Space>
@@ -122,7 +177,11 @@ function CategoryList() {
         Thêm Danh Mục
       </Button>
 
-      <Table dataSource={products} columns={columns} loading={isLoading} />
+      <Table
+        dataSource={categories}
+        columns={columns}
+        loading={isCategoryLoading}
+      />
 
       {/* Sidebar Thêm/Sửa Sản Phẩm */}
       <Drawer
