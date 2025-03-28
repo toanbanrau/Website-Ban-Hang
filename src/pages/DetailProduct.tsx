@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 
 const DetailProduct = () => {
@@ -10,25 +11,25 @@ const DetailProduct = () => {
     const { data } = await axios.get(`http://localhost:3000/products/${id}`);
     return data;
   };
-
   const addToCart = async (product: any) => {
-    if (!product) return;
-    
-    const userId = localStorage.getItem("userId"); // Lấy userId từ localStorage
+    const userId = localStorage.getItem("userId"); // Kiểm tra userId
+
     if (!userId) {
-      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
+      toast.success("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
       return;
     }
-  
-    await axios.post("http://localhost:3000/cart", {
-      userId, // Thêm userId vào giỏ hàng
-      productId: product.id,
-      name: product.name,
-      price: product.price,
-      quantity: 1,
-    });
-  
-    alert("🎉 Sản phẩm đã được thêm vào giỏ hàng!");
+
+    try {
+      await axios.post("http://localhost:3000/cart", {
+        ...product,
+        userId, // Gửi userId để xác định giỏ hàng của ai
+      });
+
+      message.success("Sản phẩm đã được thêm vào giỏ hàng!");
+      fetchCartItems(); // Cập nhật giỏ hàng
+    } catch (error) {
+      message.error("Thêm sản phẩm thất bại!");
+    }
   };
 
   const { data: product } = useQuery({
@@ -53,21 +54,7 @@ const DetailProduct = () => {
           <div className="price-section">
             <span className="current-price">{product?.price} VNĐ</span>
           </div>
-          <div className="product-details">
-            <p>
-              <strong>Kích cỡ:</strong> 39 - 43
-            </p>
-            <p>
-              <strong>Màu sắc:</strong> Đen / Nâu / Trắng
-            </p>
-            <p>
-              <strong>Chất liệu:</strong> Da thật cao cấp
-            </p>
-            <p>
-              <strong>Tình trạng:</strong>{" "}
-              <span className="stock-status">Còn hàng</span>
-            </p>
-          </div>
+
           <div className="action-buttons">
             <button className="add-to-cart" onClick={() => addToCart(product)}>
               Thêm vào giỏ hàng

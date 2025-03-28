@@ -1,54 +1,92 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaSearch, FaShoppingCart, FaUser } from "react-icons/fa";
-import { Badge, Button, Drawer, Form, Input, Modal, Tabs, message } from "antd"; // Import Modal & Tabs từ Ant Design
-import { useState } from "react";
+import { Badge, Button, Drawer, Form, Input, Modal, Tabs, message } from "antd";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
 const Header = () => {
-  const [cartItems, setCartItems] = useState([]);
+  interface CartItem {
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+    image: string;
+  }
+
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [loading, setLoading] = useState(false); // Loading state for API calls
+  const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(
+    localStorage.getItem("userId")
+  );
+
   const cartItemCount = cartItems.reduce(
-    (total, item: any) => total + item.quantity,
+    (total, item) => total + (item.quantity || 0),
     0
   );
 
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    setUserId(storedUserId);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userId");
+    setUserId(null);
+    message.success("Bạn đã đăng xuất!");
+  };
+
   const showDrawer = () => {
     setDrawerVisible(true);
-    fetchCartItems(); // Gọi API để lấy dữ liệu giỏ hàng
+    fetchCartItems();
   };
+
   const closeDrawer = () => setDrawerVisible(false);
 
   const showModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
 
-  // Handle user registration
-  interface RegisterValues {
-    fullname: string;
-    email: string;
-    password: string;
-  }
-
   const fetchCartItems = async () => {
+    if (!userId) {
+      message.warning("Vui lòng đăng nhập để xem giỏ hàng!");
+      return;
+    }
+
     try {
-      const response = await axios.get("http://localhost:3000/cart");
-      setCartItems(response.data); // Lưu dữ liệu giỏ hàng vào state
+      const response = await axios.get(
+        `http://localhost:3000/cart?userId=${userId}`
+      );
+      const validCartItems = response.data.map((item: any) => ({
+        ...item,
+        price: item.price || 0,
+        quantity: item.quantity || 0,
+      }));
+      setCartItems(validCartItems);
     } catch (error) {
       message.error("Không thể tải dữ liệu giỏ hàng!");
     }
   };
 
+  const deleteCartItem = async (itemId: number) => {
+    try {
+      await axios.delete(`http://localhost:3000/cart/${itemId}`);
+      setCartItems((prevCart) => prevCart.filter((item) => item.id !== itemId));
+      message.success("Đã xóa sản phẩm khỏi giỏ hàng!");
+    } catch (error) {
+      message.error("Xóa sản phẩm thất bại!");
+    }
+  };
+
   const updateCartQuantity = async (itemId: number, newQuantity: number) => {
-    if (newQuantity < 1) return; // Không cho số lượng nhỏ hơn 1
+    if (newQuantity < 1) return;
 
     try {
       await axios.patch(`http://localhost:3000/cart/${itemId}`, {
         quantity: newQuantity,
       });
 
-      // Cập nhật UI ngay sau khi API thành công
       setCartItems((prevCart) =>
         prevCart.map((item) =>
           item.id === itemId ? { ...item, quantity: newQuantity } : item
@@ -59,13 +97,14 @@ const Header = () => {
     }
   };
 
-  const handleRegister = async (values: RegisterValues) => {
+  const handleRegister = async (values: {
+    fullname: string;
+    email: string;
+    password: string;
+  }) => {
     setLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:3000/register",
-        values
-      );
+      await axios.post("http://localhost:3000/register", values);
       message.success("Đăng ký thành công!");
       closeModal();
     } catch (error: any) {
@@ -75,13 +114,13 @@ const Header = () => {
     }
   };
 
-  // Handle user login
-  const handleLogin = async (values: any) => {
+  const handleLogin = async (values: { email: string; password: string }) => {
     setLoading(true);
     try {
       const response = await axios.post("http://localhost:3000/login", values);
-      const { token } = response.data; // Extract token from response
-      localStorage.setItem("userId", token); // Store token in localStorage
+      const { token } = response.data;
+      localStorage.setItem("userId", token);
+      setUserId(token);
       message.success("Đăng nhập thành công!");
       closeModal();
     } catch (error: any) {
@@ -103,37 +142,43 @@ const Header = () => {
           <ul className="nav">
             <li className="nav-item">
               <Link to="/" className="nav-link text-dark">
-                TRANG CHỦ
+                Trang Chủ
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to={"product"} className="nav-link text-dark">
+                Sản Phẩm
               </Link>
             </li>
             <li className="nav-item">
               <a href="#" className="nav-link text-dark">
-                NIKE
-              </a>
-            </li>
-            <li className="nav-item">
-              <a href="#" className="nav-link text-dark">
-                ADIDAS
+                Liên Hệ
               </a>
             </li>
           </ul>
           <ul className="nav ms-3">
             <li className="nav-item">
-              <a href="#" className="nav-link text-dark">
+              <button className="nav-link text-dark">
                 <FaSearch size={20} />
-              </a>
+              </button>
             </li>
             <li className="nav-item">
-              <a href="#" className="nav-link text-dark" onClick={showModal}>
-                <FaUser size={20} />
-              </a>
-            </li>
-            <li className="nav-item">
-              <a href="#" className="nav-link text-dark" onClick={showDrawer}>
+              <button className="nav-link text-dark" onClick={showDrawer}>
                 <Badge count={cartItemCount} offset={[10, 0]}>
                   <FaShoppingCart size={20} />
                 </Badge>
-              </a>
+              </button>
+            </li>
+            <li className="nav-item">
+              {userId ? (
+                <button className="btn btn-danger" onClick={handleLogout}>
+                  🚪 Đăng Xuất
+                </button>
+              ) : (
+                <button className="nav-link text-dark" onClick={showModal}>
+                  <FaUser size={20} />
+                </button>
+              )}
             </li>
           </ul>
         </nav>
@@ -149,7 +194,7 @@ const Header = () => {
         {cartItems.length > 0 ? (
           <>
             <ul className="list-group mb-3">
-              {cartItems.map((item: any) => (
+              {cartItems.map((item) => (
                 <li
                   key={item.id}
                   className="list-group-item d-flex justify-content-between align-items-center p-3 border-0"
@@ -177,12 +222,10 @@ const Header = () => {
                         className="text-muted mb-0"
                         style={{ fontSize: "14px" }}
                       >
-                        {item.price.toLocaleString()} VNĐ
+                        {(item.price || 0).toLocaleString()} VNĐ
                       </p>
                     </div>
                   </div>
-
-                  {/* Bộ điều chỉnh số lượng sản phẩm */}
                   <div className="d-flex align-items-center">
                     <button
                       className="btn btn-light btn-sm px-2"
@@ -207,7 +250,7 @@ const Header = () => {
                         textAlign: "center",
                       }}
                     >
-                      {item.quantity}
+                      {item.quantity || 0}
                     </span>
                     <button
                       className="btn btn-light btn-sm px-2"
@@ -223,8 +266,6 @@ const Header = () => {
                       +
                     </button>
                   </div>
-
-                  {/* Giá sản phẩm */}
                   <span
                     className="text-success fw-bold"
                     style={{
@@ -233,13 +274,21 @@ const Header = () => {
                       textAlign: "right",
                     }}
                   >
-                    {(item.price * item.quantity).toLocaleString()} VNĐ
+                    {(
+                      (item.price || 0) * (item.quantity || 0)
+                    ).toLocaleString()}{" "}
+                    VNĐ
                   </span>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    style={{ borderRadius: "50%" }}
+                    onClick={() => deleteCartItem(item.id)}
+                  >
+                    🗑️
+                  </button>
                 </li>
               ))}
             </ul>
-
-            {/* Tổng tiền */}
             <div
               className="d-flex justify-content-between align-items-center fw-bold py-3 px-2"
               style={{
@@ -251,29 +300,14 @@ const Header = () => {
               <span className="text-danger fs-4">
                 {cartItems
                   .reduce(
-                    (total: number, item: any) =>
-                      total + item.price * item.quantity,
+                    (total, item) =>
+                      total + (item.price || 0) * (item.quantity || 0),
                     0
                   )
                   .toLocaleString()}{" "}
                 VNĐ
               </span>
             </div>
-
-            {/* Nút Thanh Toán */}
-            <button
-              className="btn w-100 text-white py-2"
-              style={{
-                background: "linear-gradient(135deg, #ff7f50, #ff6347)",
-                fontSize: "18px",
-                borderRadius: "10px",
-                transition: "0.3s",
-              }}
-              onMouseOver={(e) => (e.currentTarget.style.opacity = "0.9")}
-              onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
-            >
-              Thanh Toán Ngay
-            </button>
           </>
         ) : (
           <p className="text-center text-muted">

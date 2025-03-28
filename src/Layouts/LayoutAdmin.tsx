@@ -44,16 +44,15 @@ const LayoutAdmin: React.FC = () => {
       icon: <UserOutlined />,
       label: "User",
       children: [
-        { key: "3", label: "Tom", onClick: () => navigate("/admin/user/tom") },
+        {
+          key: "3",
+          label: "Admin",
+          onClick: () => navigate("/admin/user/list"),
+        },
         {
           key: "4",
           label: "Bill",
-          onClick: () => navigate("/admin/user/bill"),
-        },
-        {
-          key: "5",
-          label: "Alex",
-          onClick: () => navigate("/admin/user/alex"),
+          onClick: () => navigate("/admin/user/"),
         },
       ],
     },

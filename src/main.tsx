@@ -10,6 +10,7 @@ const queryClient = new QueryClient(); // ✅ Tạo một instance
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>
+      
       <App />
     </QueryClientProvider>
   </BrowserRouter>

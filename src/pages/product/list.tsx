@@ -14,6 +14,8 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import IProduct from "../../interfaces/product";
 import ICategory from "../../interfaces/categorys";
+import { useList } from "../../hook";
+import { createProduct } from "../../Provieder";
 
 function ProductList() {
   const queryClient = useQueryClient();
@@ -31,19 +33,12 @@ function ProductList() {
   });
 
   // Fetch danh sách sản phẩm
-  const { data: products, isLoading } = useQuery({
-    queryKey: ["products"],
-    queryFn: async () => {
-      const { data } = await axios.get("http://localhost:3000/products");
-      return data;
-    },
-  });
+  const { data: products, isLoading } = useList({ resource: "products" });
 
   // Thêm sản phẩm mới
   const addProduct = useMutation({
-    mutationFn: async (newProduct: IProduct) => {
-      await axios.post("http://localhost:3000/products", newProduct);
-    },
+    mutationFn: (values: IProduct) =>
+      createProduct({ resource: "products", values }),
     onSuccess: () => {
       toast.success("Thêm sản phẩm thành công!");
       queryClient.invalidateQueries(["products"]);
@@ -212,7 +207,7 @@ function ProductList() {
           <Form.Item
             name="thumbnail"
             label="Hình ảnh"
-            rules={[{ required: true, message: "Vui lòng nhập URL hình ảnh" }]}
+            rules={[{ required: true, message: "Vui lòng tải lên hình ảnh" }]}
           >
             <Input />
           </Form.Item>
