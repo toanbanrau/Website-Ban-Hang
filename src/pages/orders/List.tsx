@@ -18,7 +18,9 @@ const Order = () => {
           name: order.name,
           phone: order.phone,
           address: order.address,
-          items: order.items, // Giữ nguyên danh sách sản phẩm
+          items: order.items,
+          payment: order.paymentMethod,
+          // Giữ nguyên danh sách sản phẩm
           totalAmount: order.items.reduce(
             (sum, item) => sum + item.price * item.quantity,
             0
@@ -98,6 +100,11 @@ const Order = () => {
       key: "totalAmount",
     },
     {
+      title: "Payment Method",
+      dataIndex: "payment",
+      key: "paymentMethod",
+    },
+    {
       title: "Status",
       dataIndex: "status",
       key: "status",
@@ -106,6 +113,7 @@ const Order = () => {
           value={status}
           style={{ width: 120 }}
           onChange={(value) => handleStatusChange(value, record)}
+          disabled={status === "Completed"} // Vô hiệu hóa nếu trạng thái là Completed
         >
           <Option value="Pending">Pending</Option>
           <Option value="Completed">Completed</Option>

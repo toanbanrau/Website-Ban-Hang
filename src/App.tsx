@@ -1,8 +1,6 @@
 import { useRoutes } from "react-router-dom";
 
 import ProductList from "./pages/product/list";
-import ProductAdd from "./pages/product/add";
-import ProductEdit from "./pages/product/edit";
 import LayoutAdmin from "./Layouts/LayoutAdmin";
 import LayoutClient from "./Layouts/LayoutClient";
 import CategoryList from "./pages/category/list";
@@ -11,9 +9,11 @@ import DetailProduct from "./pages/DetailProduct";
 import Home from "./pages/Home";
 import Checkout from "./pages/Checkout";
 import UserList from "./pages/users/list";
+import JwtDecode from "jwt-decode";
 
 import { Toaster } from "react-hot-toast";
 import Product from "./pages/Product";
+import SearchResults from "./pages/SeacrResults";
 
 function App() {
   const element = useRoutes([
@@ -25,6 +25,7 @@ function App() {
         { path: "product", element: <Product /> },
         { path: "product/:id", element: <DetailProduct /> },
         { path: "checkout", element: <Checkout /> },
+        { path: "search", element: <SearchResults /> },
       ],
     },
     {
@@ -32,8 +33,7 @@ function App() {
       element: <LayoutAdmin />,
       children: [
         { path: "product/list", element: <ProductList /> },
-        { path: "product/add", element: <ProductAdd /> },
-        { path: "product/edit/:id", element: <ProductEdit /> },
+
         { path: "user/list", element: <UserList /> },
         { path: "category", element: <CategoryList /> },
         { path: "order", element: <Order /> },

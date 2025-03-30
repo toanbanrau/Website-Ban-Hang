@@ -12,23 +12,70 @@ const DetailProduct = () => {
     return data;
   };
   const addToCart = async (product: any) => {
-    const userId = localStorage.getItem("userId"); // Kiểm tra userId
+    const userId = localStorage.getItem("userId");
 
     if (!userId) {
-      toast.success("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
+      toast.error("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
       return;
     }
 
     try {
-      await axios.post("http://localhost:3000/cart", {
-        ...product,
-        userId, // Gửi userId để xác định giỏ hàng của ai
-      });
+      // Kiểm tra xem giỏ hàng của user đã tồn tại chưa
+      const response = await axios.get(
+        `http://localhost:3000/cart?userId=${userId}`
+      );
+      const cart = response.data[0]; // Giỏ hàng của user
 
-      message.success("Sản phẩm đã được thêm vào giỏ hàng!");
-      fetchCartItems(); // Cập nhật giỏ hàng
+      if (cart) {
+        // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+        const existingProductIndex = cart.products.findIndex(
+          (p: any) => p.id === product.id
+        );
+
+        if (existingProductIndex !== -1) {
+          // Nếu sản phẩm đã tồn tại, cập nhật số lượng + tổng giá
+          cart.products[existingProductIndex].quantity += 1;
+          cart.products[existingProductIndex].totalPrice =
+            cart.products[existingProductIndex].quantity * product.price;
+        } else {
+          // Nếu sản phẩm chưa có, thêm mới vào danh sách
+          cart.products.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            thumbnail: product.thumbnail,
+            quantity: 1,
+            totalPrice: product.price,
+          });
+        }
+
+        // Cập nhật giỏ hàng
+        await axios.patch(`http://localhost:3000/cart/${cart.id}`, {
+          products: cart.products,
+        });
+        toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
+      } else {
+        // Nếu user chưa có giỏ hàng, tạo giỏ hàng mới
+        const newCart = {
+          userId,
+          products: [
+            {
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              thumbnail: product.thumbnail,
+              quantity: 1,
+              totalPrice: product.price,
+            },
+          ],
+        };
+
+        await axios.post("http://localhost:3000/cart", newCart);
+        toast.success("Giỏ hàng mới đã được tạo và sản phẩm đã được thêm!");
+      }
     } catch (error) {
-      message.error("Thêm sản phẩm thất bại!");
+      console.error("Lỗi khi thêm vào giỏ hàng:", error);
+      toast.error("Thêm sản phẩm thất bại!");
     }
   };
 
