@@ -1,0 +1,76 @@
+.history-order-container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+h2 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.orders-table {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  padding: 15px;
+  background: #f5f5f5;
+  font-weight: bold;
+  border-bottom: 1px solid #eee;
+}
+
+.order-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  align-items: center;
+}
+
+.order-row:last-child {
+  border-bottom: none;
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 12px;
+  color: white;
+  text-align: center;
+}
+
+.status.đã-giao {
+  background: #2ecc71;
+}
+
+.status.đang-xử-lý {
+  background: #f1c40f;
+}
+
+.status.đã-hủy {
+  background: #e74c3c;
+}
+
+.details-btn {
+  padding: 5px 10px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.details-btn:hover {
+  background: #2980b9;
+}
+
+.empty-message {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}

@@ -33,3 +33,8 @@ export const deleteProduct = async ({ resource = "products", id }: Props) => {
 };
 
 
+export const auth = async ({ resource = "register", values }: Props) => {
+  const { data } = await axiosInstance.post(resource, values);
+  return data;
+};
+

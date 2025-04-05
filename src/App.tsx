@@ -1,5 +1,4 @@
 import { useRoutes } from "react-router-dom";
-
 import ProductList from "./pages/product/list";
 import LayoutAdmin from "./Layouts/LayoutAdmin";
 import LayoutClient from "./Layouts/LayoutClient";
@@ -9,11 +8,12 @@ import DetailProduct from "./pages/DetailProduct";
 import Home from "./pages/Home";
 import Checkout from "./pages/Checkout";
 import UserList from "./pages/users/list";
-import JwtDecode from "jwt-decode";
-
 import { Toaster } from "react-hot-toast";
 import Product from "./pages/Product";
-import SearchResults from "./pages/SeacrResults";
+import HistoryOrder from "./pages/HistoryOrder";
+import Profile from "./pages/Profile";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
 
 function App() {
   const element = useRoutes([
@@ -25,7 +25,10 @@ function App() {
         { path: "product", element: <Product /> },
         { path: "product/:id", element: <DetailProduct /> },
         { path: "checkout", element: <Checkout /> },
-        { path: "search", element: <SearchResults /> },
+        { path: "historyOrder", element: <HistoryOrder /> },
+        { path: "profile", element: <Profile /> },
+        { path: "register", element: <Register /> },
+        { path: "login", element: <Login /> },
       ],
     },
     {
@@ -33,7 +36,6 @@ function App() {
       element: <LayoutAdmin />,
       children: [
         { path: "product/list", element: <ProductList /> },
-
         { path: "user/list", element: <UserList /> },
         { path: "category", element: <CategoryList /> },
         { path: "order", element: <Order /> },

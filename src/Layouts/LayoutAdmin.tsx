@@ -51,8 +51,8 @@ const LayoutAdmin: React.FC = () => {
         },
         {
           key: "4",
-          label: "Bill",
-          onClick: () => navigate("/admin/user/"),
+          label: "User",
+          onClick: () => navigate("/admin/user/listUser"),
         },
       ],
     },
