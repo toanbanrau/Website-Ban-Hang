@@ -40,7 +40,7 @@ export const useAuth = ({ resource = "register" }) => {
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("userId",data.user.id);
       nav("/");
-      login(data.user.id);
+      login(data.user.id,data.user);
     },
   });
 };

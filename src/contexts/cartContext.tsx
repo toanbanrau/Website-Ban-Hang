@@ -9,11 +9,10 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const { userId } = useUser(); // Lấy userId từ context người dùng
   useEffect(() => {
-    fetchCart(); // Gọi hàm fetchCart khi component mount
+    if (!userId) setCartItems([]); // Nếu không có userId, đặt giỏ hàng trống
   }, [userId]);
 
   const fetchCart = async () => {
-    const userId = localStorage.getItem("userId");
     if (!userId) {
       console.warn("Người dùng chưa đăng nhập!");
       return;

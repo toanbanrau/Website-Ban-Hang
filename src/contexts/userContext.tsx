@@ -13,9 +13,9 @@ type User = {
 };
 
 interface UserContextType {
-  user: User | null;
-  userId: string | null; // sửa từ userID thành userId cho đồng nhất
-  login: (user: User) => void;
+  user: User | null; // sửa từ userID thành userId cho đồng nhất
+  userId: string | null;
+  login: (userID:any,user: User) => void;
   logout: () => void;
 }
 
@@ -29,29 +29,28 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   // useEffect: lấy dữ liệu người dùng từ localStorage
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const storedUserId = localStorage.getItem("userId");
+    const user = localStorage.getItem("user");
+    const userId = localStorage.getItem("userId");
 
-    if (storedUser && storedUserId) {
-      setUser(JSON.parse(storedUser));
-      setUserId(storedUserId); // Cập nhật ngay userId từ localStorage
+    if (user && userId) {
+      setUser(JSON.parse(user));
+      setUserId(userId); // Cập nhật ngay userId từ localStorage
     }
   }, []);
 
   // login: Cập nhật thông tin người dùng và userId
-  const login = (user: User) => {
+  const login = (userId: any, user: User) => {
     setUser(user);
-    setUserId(userId); // Đảm bảo userId là kiểu string
-    // Lưu thông tin vào localStorage
+    setUserId(userId);
   };
 
   // logout: Xóa thông tin người dùng và userId
   const logout = () => {
-    setUser(null);
-    setUserId(null);
     localStorage.removeItem("userId");
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    setUser(null);
+    setUserId(null);
   };
 
   return (
