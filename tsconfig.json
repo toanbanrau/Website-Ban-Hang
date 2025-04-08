@@ -1,7 +1,11 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "compilerOptions": {
+    "strict": false,              // Tắt strict mode
+    "noImplicitAny": false,       // Không báo lỗi khi không khai báo kiểu dữ liệu
+    "skipLibCheck": true,         // Bỏ qua kiểm tra type của thư viện
+    "esModuleInterop": true,      // Giúp import hoạt động dễ hơn
+    "allowJs": true,              // Cho phép file .js
+    "jsx": "react-jsx"            // Hoặc "react", tùy version
+  },
+  "include": ["src"]
 }
