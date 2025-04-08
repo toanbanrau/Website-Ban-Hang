@@ -7,7 +7,7 @@ import Order from "./pages/orders/List";
 import DetailProduct from "./pages/DetailProduct";
 import Home from "./pages/Home";
 import Checkout from "./pages/Checkout";
-import UserList from "./pages/users/list";
+import UserList from "./pages/users/ListAdmin";
 import { Toaster } from "react-hot-toast";
 import Product from "./pages/Product";
 import HistoryOrder from "./pages/HistoryOrder";
