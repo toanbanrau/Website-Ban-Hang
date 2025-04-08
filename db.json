@@ -104,7 +104,9 @@
       "email": "thieutoan2004@gmail.com",
       "password": "$2a$10$yimZ7.YeU7rfOh//FM.G1eh4htbaX/3zuO1qRaER3qSt6XyBaW71u",
       "fullname": "Toan Ban Giay",
-      "id": 1
+      "id": 1,
+      "role": "user"
+ 
     },
     {
       "email": "thieutoan@gmail.com",
@@ -118,18 +120,22 @@
       "password": "$2a$10$uFVybLBx16UQ8nZGthIelOnn4viyZfVga.c/GmF79oxjwGw2zBLIW",
       "fullname": "toanbanrau",
       "id": 3
+      ,
+      "role": "user"
     },
     {
       "email": "toanbanca2004@gmail.com",
       "password": "$2a$10$gE3RH/sFMA8zZ9QAs832yeYCeY28ksCWT3IIsCen/MYNRou63JEw.",
       "fullname": "toanbanrau",
-      "id": 4
+      "id": 4,
+      "role": "user"
     },
     {
       "email": "thieutoan123@gmail.com",
       "password": "$2a$10$2hPyR7D1/NzKhtiAyYdJd.S9FM7GBKlAshKswCUoWv4rPtJTgc/oy",
       "fullname": "toanbanrau",
-      "id": 5
+      "id": 5,
+      "role": "user"
     }
   ],
   "cart": [
@@ -138,7 +144,7 @@
       "products": [
         {
           "productId": "16dd",
-          "quantity": 10,
+          "quantity": 9,
           "totalPrice": null
         }
       ],
@@ -248,6 +254,12 @@
       "content": "kkk\n",
       "timestamp": "2025-04-01T05:57:42.015Z",
       "id": 3
+    },
+    {
+      "userId": "2",
+      "content": "dep qua\n",
+      "timestamp": "2025-04-08T03:20:39.029Z",
+      "id": 4
     }
   ]
 }

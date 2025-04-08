@@ -15,7 +15,7 @@ type User = {
 interface UserContextType {
   user: User | null; // sửa từ userID thành userId cho đồng nhất
   userId: string | null;
-  login: (userID:any,user: User) => void;
+  login: (userID: any, user: User) => void;
   logout: () => void;
 }
 
@@ -46,11 +46,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   // logout: Xóa thông tin người dùng và userId
   const logout = () => {
+    setUser(null);
+    setUserId(null);
     localStorage.removeItem("userId");
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    setUser(null);
-    setUserId(null);
   };
 
   return (

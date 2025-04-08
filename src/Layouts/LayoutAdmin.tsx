@@ -1,16 +1,13 @@
 import React, { useState } from "react";
 import {
-  DesktopOutlined,
-  FileOutlined,
-  PieChartOutlined,
-  TeamOutlined,
-  UserOutlined,
-  AppstoreOutlined,
-  TagsOutlined,
-  InboxOutlined,
+  DashboardOutlined, // Dùng cho Dashboard
+  InboxOutlined, // Dùng cho Product
+  AppstoreAddOutlined, // Dùng cho Order
+  BranchesOutlined, // Dùng cho Category
+  UsergroupAddOutlined, // Dùng cho User
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import { Breadcrumb, Layout, Menu, theme } from "antd";
+import { Breadcrumb, Layout, Menu } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -23,53 +20,50 @@ const LayoutAdmin: React.FC = () => {
   const items: MenuProps["items"] = [
     {
       key: "1",
+      icon: <DashboardOutlined />, // Thay bằng icon Dashboard
+      label: "Dashboard",
+      onClick: () => navigate("/admin"),
+    },
+    {
+      key: "2",
       icon: <InboxOutlined />,
       label: "Product",
       onClick: () => navigate("/admin/product/list"),
     },
     {
-      key: "2",
-      icon: <AppstoreOutlined />,
+      key: "3",
+      icon: <AppstoreAddOutlined />,
       label: "Order",
       onClick: () => navigate("/admin/order"),
     },
     {
-      key: "10",
-      icon: <FileOutlined />,
+      key: "4",
+      icon: <BranchesOutlined />,
       label: "Category",
-      onClick: () => navigate("/admin/category"), // ✅ Thêm Category
+      onClick: () => navigate("/admin/category"),
     },
     {
       key: "sub1",
-      icon: <UserOutlined />,
+      icon: <UsergroupAddOutlined />,
       label: "User",
       children: [
         {
-          key: "3",
+          key: "5",
           label: "Admin",
-          onClick: () => navigate("/admin/user/list"),
+          onClick: () => navigate("/admin/user/listAdmin"),
         },
         {
-          key: "4",
+          key: "6",
           label: "User",
           onClick: () => navigate("/admin/user/listUser"),
         },
       ],
     },
     {
-      key: "sub2",
-      icon: <TeamOutlined />,
-      label: "Team",
-      children: [
-        { key: "6", label: "Team 1", onClick: () => navigate("/admin/team/1") },
-        { key: "8", label: "Team 2", onClick: () => navigate("/admin/team/2") },
-      ],
-    },
-    {
-      key: "9",
-      icon: <FileOutlined />,
-      label: "Files",
-      onClick: () => navigate("/admin/files"),
+      key: "7",
+      icon: <InboxOutlined />, // Thay bằng icon phù hợp cho Comment
+      label: "Comment",
+      onClick: () => navigate("/admin/comment"),
     },
   ];
 

@@ -14,6 +14,9 @@ import HistoryOrder from "./pages/HistoryOrder";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import DashBoard from "./pages/dashboard/DashBoard";
+import ListUser from "./pages/users/ListUser";
+import Comment from "./pages/comments/Comment";
 
 function App() {
   const element = useRoutes([
@@ -34,11 +37,15 @@ function App() {
     {
       path: "/admin",
       element: <LayoutAdmin />,
+
       children: [
+        { index: true, element: <DashBoard /> },
         { path: "product/list", element: <ProductList /> },
-        { path: "user/list", element: <UserList /> },
+        { path: "user/listAdmin", element: <UserList /> },
+        { path: "user/listUser", element: <ListUser /> },
         { path: "category", element: <CategoryList /> },
         { path: "order", element: <Order /> },
+        { path: "comment", element: <Comment /> },
       ],
     },
   ]);

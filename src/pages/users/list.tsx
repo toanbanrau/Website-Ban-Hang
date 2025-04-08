@@ -14,7 +14,7 @@ const UserList: React.FC = () => {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:3000/users");
+        const response = await fetch("http://localhost:3000/users?role=admin"); // Thay URL bằng API của bạn
         const result = await response.json();
         setData(result);
       } catch (error) {

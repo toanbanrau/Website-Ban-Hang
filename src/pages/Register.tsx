@@ -4,7 +4,11 @@ import { useAuth } from "../hook";
 const Register = () => {
   const { mutate } = useAuth({ resource: "register" });
   const handleRegister = async (values: any) => {
-    mutate(values);
+    const payload = {
+      ...values,
+      role: "user", // Thêm role mặc định
+    };
+    mutate(payload);
   };
 
   return (
